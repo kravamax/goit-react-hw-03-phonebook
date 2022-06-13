@@ -9,9 +9,29 @@ import Container from './Container';
 
 export class App extends Component {
   state = {
-    contacts: contactsData,
+    contacts: [],
     filter: '',
   };
+
+  componentDidMount() {
+    const storageData = localStorage.getItem('contacts');
+    const parsedstorageData = JSON.parse(storageData);
+
+    if (!parsedstorageData) {
+      this.setState({ contacts: contactsData });
+    } else {
+      this.setState({ contacts: parsedstorageData });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevstate) {
+    const nextContacts = this.state.contacts;
+    const prevContacts = prevstate.contacts;
+
+    if (prevContacts !== nextContacts) {
+      localStorage.setItem('contacts', JSON.stringify(nextContacts));
+    }
+  }
 
   addContact = contact => {
     this.setState(prevState => ({
